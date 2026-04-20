@@ -152,12 +152,15 @@ func GaussLegendre(webPrint func(string), iters int) {
 	webPrint(fmt.Sprintf("  π = %s", piStr))
 
 	// Cross-verify with BBP
-	verifyDigits := 500
+	expectedDigits := 1 << uint(iters)
+	verifyDigits := 3000
+	if expectedDigits < verifyDigits {
+		verifyDigits = expectedDigits
+	}
 	verifyMsg := pkg.VerifyAndReport(pi, verifyDigits, "Gauss-Legendre")
 	webPrint(verifyMsg)
 
 	// If more than 3000 digits were produced, note it
-	expectedDigits := 1 << uint(iters)
 	if expectedDigits > 3000 {
 		webPrint(fmt.Sprintf("  (... and %s more correct digits)",
 			pkg.FormatIntWithCommas(int64(expectedDigits-3000))))
