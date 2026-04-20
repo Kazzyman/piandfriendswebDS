@@ -112,7 +112,7 @@ func Wallis(done chan bool, webPrint func(string)) {
 
 	webPrint("")
 	webPrint(pkg.BoxSep(50))
-	webPrint(fmt.Sprintf("  Final after 40 billion iterations:"))
+	webPrint("  Final after 40 billion iterations:")
 	webPrint(fmt.Sprintf("  π ≈ %.12f", pi))
 	webPrint(fmt.Sprintf("  math.Pi = %.12f", 3.141592653589793))
 	webPrint(fmt.Sprintf("  Time: %s", elapsed.Round(time.Millisecond)))

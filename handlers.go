@@ -74,9 +74,6 @@ func handleRun(w http.ResponseWriter, r *http.Request) {
 			}
 			algorithms.Chudnovsky(done, webPrint, digits)
 
-		case "customseries":
-			algorithms.CustomSeries(done, webPrint)
-
 		case "wallis":
 			algorithms.Wallis(done, webPrint)
 
@@ -90,6 +87,9 @@ func handleRun(w http.ResponseWriter, r *http.Request) {
 
 		case "gregory":
 			algorithms.GregoryLeibniz(done, webPrint)
+
+		case "gregory4":
+    		algorithms.Gregory4(done, webPrint)
 
 		case "nilakantha":
 			itersStr := r.URL.Query().Get("iters")
@@ -138,10 +138,7 @@ func handleRun(w http.ResponseWriter, r *http.Request) {
 
 		case "erdos":
 			algorithms.ErdosBorwein(done, webPrint)
-/*			
-		case "erdosBio":
-			algorithms.erdosBio(done, webPrint)
-*/
+
 		case "eulers":
 			algorithms.EulersNumber(done, webPrint)
 

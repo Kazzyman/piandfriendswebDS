@@ -67,8 +67,8 @@ func GregoryLeibniz(done chan bool, webPrint func(string)) {
 
 	webPrint("")
 	webPrint(pkg.BoxSep(50))
-	webPrint(fmt.Sprintf("  Final after 9 billion iterations:"))
-	webPrint(fmt.Sprintf("  π ≈ 3.1415926535..."))
+	webPrint("  Final after 9 billion iterations:")
+	webPrint("  π ≈ 3.1415926535...")
 	webPrint(fmt.Sprintf("  Time: %s", elapsed.Round(time.Millisecond)))
 	webPrint("")
 	webPrint("  James Gregory (1638–1675) and Gottfried Wilhelm")

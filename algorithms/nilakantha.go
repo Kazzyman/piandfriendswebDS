@@ -9,7 +9,7 @@ import (
 )
 
 // Nilakantha computes π using Nilakantha Somayaji's alternating series:
-// π = 3 + 4/(2·3·4) - 4/(4·5·6) + 4/(6·7·8) - ...
+// π = 3 + 4/(2·3·4) - 4/(4·5·6) + 4/(6·7·8) - 4/(8·9·10) + ...
 // Discovered in Kerala, India, c. 1530—150 years before Newton.
 func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 	webPrint(pkg.BoxLine("  NILAKANTHA SOMAYAJI'S SERIES  ", 50))
@@ -24,25 +24,22 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 		webPrint("  Cannot exceed 1 billion iterations.")
 		return
 	}
+	if iters < 1 {
+		iters = 1
+	}
 
 	start := time.Now()
-
 	prec := uint(precision)
 
-	two := new(big.Float).SetPrec(prec).SetFloat64(2.0)
 	three := new(big.Float).SetPrec(prec).SetFloat64(3.0)
 	four := new(big.Float).SetPrec(prec).SetFloat64(4.0)
 
-	d1 := new(big.Float).SetPrec(prec).SetFloat64(2.0)
-	d2 := new(big.Float).SetPrec(prec).SetFloat64(3.0)
-	d3 := new(big.Float).SetPrec(prec).SetFloat64(4.0)
+	// k=1 term: 4/(2·3·4) = 4/24 = 1/6
+	firstTerm := new(big.Float).SetPrec(prec).Quo(four, new(big.Float).SetPrec(prec).SetFloat64(2*3*4))
+	pi := new(big.Float).SetPrec(prec).Add(three, firstTerm)
 
-	// Initial term: 3 + 4/(2·3·4)
-	firstTerm := new(big.Float).SetPrec(prec).Quo(four,
-		new(big.Float).Mul(d1, new(big.Float).Mul(d2, d3)))
-	sum := new(big.Float).SetPrec(prec).Add(three, firstTerm)
-
-	for k := 1; k < iters; k++ {
+	// Loop for k=2 to iters
+	for k := 2; k <= iters; k++ {
 		select {
 		case <-done:
 			webPrint("  Stopped.")
@@ -50,23 +47,32 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 		default:
 		}
 
-		d1.Add(d1, two)
-		d2.Add(d2, two)
-		d3.Add(d3, two)
+		// Calculate denominators: (2k), (2k+1), (2k+2)
+		d1 := new(big.Float).SetPrec(prec).SetFloat64(float64(2 * k))
+		d2 := new(big.Float).SetPrec(prec).SetFloat64(float64(2*k + 1))
+		d3 := new(big.Float).SetPrec(prec).SetFloat64(float64(2*k + 2))
 
-		term := new(big.Float).SetPrec(prec).Quo(four,
-			new(big.Float).Mul(d1, new(big.Float).Mul(d2, d3)))
+		// Denominator product using big.Float
+		denom := new(big.Float).SetPrec(prec).Mul(d1, new(big.Float).SetPrec(prec).Mul(d2, d3))
 
+		// Term = 4 / denom
+		term := new(big.Float).SetPrec(prec).Quo(four, denom)
+
+		// k=2 subtract, k=3 add, k=4 subtract, etc.
 		if k%2 == 0 {
-			sum.Add(sum, term)
+			pi.Sub(pi, term)
 		} else {
-			sum.Sub(sum, term)
+			pi.Add(pi, term)
 		}
 
-		// Progress
-		if k > 0 && k%1000000 == 0 {
-			webPrint(fmt.Sprintf("  ... %s iterations",
-				pkg.FormatIntWithCommas(int64(k))))
+		// Progress reporting
+		if k%100000 == 0 {
+			elapsed := time.Since(start)
+			pct := float64(k) / float64(iters) * 100
+			webPrint(fmt.Sprintf("  ... %s terms (%.1f%%) %s",
+				pkg.FormatIntWithCommas(int64(k)),
+				pct,
+				elapsed.Round(time.Millisecond)))
 		}
 	}
 
@@ -75,12 +81,25 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 	webPrint("")
 	webPrint(pkg.BoxSep(50))
 
-	showDigits := 30
-	piStr := sum.Text('f', showDigits+2)
+	showDigits := 32
+	if showDigits > precision/3 {
+		showDigits = precision / 3
+	}
+	piStr := pi.Text('f', showDigits)
 	webPrint(fmt.Sprintf("  π = %s", piStr))
 
-	// Cross-verify
-	verifyMsg := pkg.VerifyAndReport(sum, showDigits, "Nilakantha")
+	// Cross-verify with BBP
+	// Nilakantha converges slowly: error ≈ 1/(2*N³)
+	// For 1M iterations, expect ~16-18 correct digits.
+	// Verify conservatively at 15 digits.
+	verifyDigits := 15
+	if verifyDigits > showDigits {
+		verifyDigits = showDigits
+	}
+	if showDigits < 20 {
+		verifyDigits = showDigits
+	}
+	verifyMsg := pkg.VerifyAndReport(pi, verifyDigits, "Nilakantha")
 	webPrint(verifyMsg)
 
 	webPrint(fmt.Sprintf("  Time: %s", elapsed.Round(time.Millisecond)))
