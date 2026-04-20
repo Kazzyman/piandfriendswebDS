@@ -13,8 +13,10 @@ https://piandfriends.onrender.com
 
 Each method in the suite calculates π (or a related constant)
 using a different algorithm, ranging from ancient geometry to
-modern number theory. The back-end is written in Go and streams
-results to the browser in real time using Server-Sent Events.
+modern number theory. Also included is a brute-force method
+for estimating the square or cube root of any integer to high
+precision. The back-end is written in Go and streams results 
+to the browser in real time using Server-Sent Events.
 
 ## Methods included
 
