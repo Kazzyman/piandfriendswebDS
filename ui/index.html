@@ -30,19 +30,17 @@
         }
         /* Fade cue at bottom on small screens */
         @media (max-width: 900px) {
-            #sidebar {
+            body { flex-direction: column; overflow: auto; }
+            #sidebar { 
+                width: 100%; 
+                min-width: unset; 
+                max-height: 45vh;
                 position: relative;
+                overflow-y: auto;
+                -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+                mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
             }
-            #sidebar::after {
-                content: "";
-                position: sticky;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 40px;
-                background: linear-gradient(to bottom, transparent, #16161e);
-                pointer-events: none;
-            }
+            #console { height: 55vh; }
         }
         #console {
             flex: 1;
