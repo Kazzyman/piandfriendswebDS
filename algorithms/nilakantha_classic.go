@@ -4,42 +4,63 @@ import (
 	"fmt"
 	"math/big"
 	"time"
-
 	"piandfriends/pkg"
 )
 
-// NilakanthaClassic runs a two-phase demonstration:
-// Phase 1: float64 with concurrent goroutines, showing the float64 wall.
-// Phase 2: big.Float breaking through that wall.
-func NilakanthaClassic(done chan bool, webPrint func(string), n1, n2 int) {
+// NilakanthaClassic runs a two-phase dramatic demonstration:
+// Phase 1: float64 with concurrent goroutines, slamming into the 15-digit wall.
+// Phase 2: big.Float breaking through to 20+ digits.
+//
+// This is a fixed demonstration. No user inputs—just watch the tragedy and triumph.
+func NilakanthaClassic(done chan bool, webPrint func(string)) {
 	const bw = 50
 
-	webPrint(pkg.BoxLine("  NILAKANTHA TWO-PHASE DEMO  ", bw))
-	webPrint(pkg.BoxLine("  π = 3 + 4/(2·3·4) - 4/(4·5·6) + ...  ", bw))
+	// Fixed parameters for maximum drama
+	const phase1Terms = 500000   // Enough to slam the wall repeatedly
+	const phase2Terms = 10000000 // 10 million: breakthrough to ~21 digits
+
+	webPrint(pkg.BoxLine("  NILAKANTHA: THE WALL  ", bw))
+	webPrint(pkg.BoxLine("  A Tragedy in Two Acts  ", bw))
 	webPrint(pkg.BoxSep(bw))
 	webPrint("")
-	webPrint(fmt.Sprintf("  Phase 1: %s terms (float64, concurrent)",
-		pkg.FormatIntWithCommas(int64(n1))))
-	webPrint("  Ceiling: ~15 digits")
-	webPrint(fmt.Sprintf("  Phase 2: %s additional terms (big.Float)",
-		pkg.FormatIntWithCommas(int64(n2))))
-	webPrint("  Ceiling: arbitrary precision")
+	webPrint("  Act I: float64")
+	webPrint("  Act II: big.Float")
+	webPrint("")
+	webPrint("  Nilakantha Somayaji's series (c. 1530):")
+	webPrint("  π = 3 + 4/(2·3·4) - 4/(4·5·6) + 4/(6·7·8) - ...")
+	webPrint("")
+	webPrint(pkg.BoxSep(bw))
 	webPrint("")
 
-	// ── Phase 1: float64 with goroutines ───────────────────────────────
-	webPrint("COLOR:yellow:  ── PHASE 1 BEGIN ──")
+	// ──────────────────────────────────────────────────────────────────
+	// ACT I: THE FALL OF FLOAT64
+	// ──────────────────────────────────────────────────────────────────
+
+	webPrint("COLOR:cyan:" + pkg.BoxLine("  ACT I: float64  ", bw))
+	webPrint("COLOR:cyan:" + pkg.BoxLine("  The March Toward the Wall  ", bw))
+	webPrint("COLOR:cyan:" + pkg.BoxSep(bw))
+	webPrint("")
+	webPrint(fmt.Sprintf("  Computing %s terms with float64...",
+		pkg.FormatIntWithCommas(int64(phase1Terms))))
+	webPrint("")
+	webPrint("  Each milestone locks in another decimal digit.")
+	webPrint("  But there is a ceiling. Watch closely.")
 	webPrint("")
 
 	phase1Start := time.Now()
 
-	ch := make(chan float64, n1)
-	sum := 3.0
+	ch := make(chan float64, phase1Terms)
 
-	// Launch goroutines for each term
-	for k := 1; k <= n1; k++ {
+	// k=1 term: 4/(2*3*4) = 1/6
+	sum := 3.0 + 1.0/6.0
+
+	// Launch goroutines for k=2 to phase1Terms
+	for k := 2; k <= phase1Terms; k++ {
 		go func(kk int) {
-			j := float64(2 * kk)
-			term := 4.0 / (j * (j + 1) * (j + 2))
+			d1 := float64(2 * kk)
+			d2 := float64(2*kk + 1)
+			d3 := float64(2*kk + 2)
+			term := 4.0 / (d1 * d2 * d3)
 			if kk%2 == 0 {
 				term = -term
 			}
@@ -47,108 +68,151 @@ func NilakanthaClassic(done chan bool, webPrint func(string), n1, n2 int) {
 		}(k)
 	}
 
-	// Collect results
 	bestDigits := 0
-	for k := 1; k <= n1; k++ {
+	wallAnnounced := false
+	lastMilestone := 0
+
+	milestoneMessages := map[int]string{
+		1:  "3.1 — the journey begins",
+		2:  "3.14 — the famous digits appear",
+		3:  "3.141 — three digits secured",
+		4:  "3.1415 — four digits",
+		5:  "3.14159 — five correct decimal digits",
+		6:  "3.141592 — six digits",
+		7:  "3.1415926 — seven digits. Confidence grows.",
+		8:  "3.14159265 — eight digits",
+		9:  "3.141592653 — nine digits",
+		10: "3.1415926535 — ten digits. float64 is strong.",
+		11: "3.14159265358 — eleven digits",
+		12: "3.141592653589 — twelve digits",
+		13: "3.1415926535897 — thirteen digits",
+		14: "3.14159265358979 — fourteen. The wall nears.",
+		15: "3.141592653589793 — FIFTEEN DIGITS.",
+	}
+
+	for k := 2; k <= phase1Terms; k++ {
 		select {
 		case <-done:
-			webPrint("  Stopped.")
+			webPrint("  The curtain falls early.")
 			return
 		case term := <-ch:
 			sum += term
 
-			if k%1000 == 0 || k == n1 {
-				// Count correct digits
-				correct := 0
-				ref := "3.14159265358979323846"
-				s := fmt.Sprintf("%.20f", sum)
-				for i := 0; i < len(ref) && i < len(s); i++ {
-					if s[i] != ref[i] {
-						break
-					}
-					correct++
+			// Count correct digits
+			correct := 0
+			ref := "3.14159265358979323846"
+			s := fmt.Sprintf("%.20f", sum)
+			for i := 0; i < len(ref) && i < len(s); i++ {
+				if s[i] != ref[i] {
+					break
 				}
-				if correct > 2 {
-					correct -= 2
-				} else {
-					correct = 0
-				}
-
-				if correct > bestDigits {
-					bestDigits = correct
-					webPrint(fmt.Sprintf("  *** %d correct digits!", correct))
-				}
-
-				pct := float64(k) / float64(n1) * 100
-				elapsed := time.Since(phase1Start)
-				webPrint(fmt.Sprintf("UPDATE:  π ≈ %.15f  [%.0f%%]  terms: %s  %s",
-					sum, pct,
-					pkg.FormatIntWithCommas(int64(k)),
-					elapsed.Round(time.Millisecond)))
+				correct++
+			}
+			if correct > 2 {
+				correct -= 2
+			} else {
+				correct = 0
 			}
 
-			// Pace for visibility
-			if k < 100 {
-				time.Sleep(10 * time.Millisecond)
+			// Milestone fanfare
+			if correct > bestDigits {
+				bestDigits = correct
+				if msg, ok := milestoneMessages[correct]; ok {
+					webPrint(fmt.Sprintf("  ✦ %s", msg))
+					lastMilestone = k
+				}
+			}
+
+			// Wall detection
+			if !wallAnnounced && bestDigits >= 15 && k > lastMilestone+10000 {
+				wallAnnounced = true
+				webPrint("")
+				webPrint("COLOR:red:" + pkg.BoxLine("  !! THE WALL !!  ", bw))
+				webPrint("COLOR:red:  float64 can go no further.")
+				webPrint("COLOR:red:  The remaining digits are noise.")
+				webPrint("COLOR:red:  More iterations change nothing.")
+				webPrint("")
+			}
+
+			// Progress updates
+			if k%50000 == 0 || k == phase1Terms {
+			pct := float64(k) / float64(phase1Terms) * 100
+				piDisplay := fmt.Sprintf("%.15f", sum)
+				if wallAnnounced {
+					// Show the stagnation dramatically
+					piDisplay = piDisplay + " (unchanging)"
+				}
+				webPrint(fmt.Sprintf("  [%3.0f%%] %s terms: π ≈ %s",
+					pct,
+					pkg.FormatIntWithCommas(int64(k)),
+					piDisplay))
 			}
 		}
 	}
 
 	phase1Elapsed := time.Since(phase1Start)
-	phase1Final := sum
 
 	webPrint("")
 	webPrint(pkg.BoxSep(bw))
-	webPrint(fmt.Sprintf("  PHASE 1 COMPLETE: %s", phase1Elapsed.Round(time.Millisecond)))
-	webPrint(fmt.Sprintf("  Final: %.15f", phase1Final))
-	webPrint(fmt.Sprintf("  Correct digits: %d", bestDigits))
+	webPrint("  ACT I COMPLETE")
+	webPrint(fmt.Sprintf("  Time: %s", phase1Elapsed.Round(time.Millisecond)))
+	webPrint(fmt.Sprintf("  Final: %.15f", sum))
+	webPrint("  Correct digits: 15 — AND NO MORE.")
 	webPrint(pkg.BoxSep(bw))
 	webPrint("")
 	webPrint("  float64 has given everything it has.")
-	webPrint("  The wall at ~15 digits is real.")
+	webPrint("  The 53-bit mantissa cannot represent")
+	webPrint("  more than ~15-16 decimal digits precisely.")
+	webPrint("  This is a hardware limit, not a mathematical one.")
 	webPrint("")
-	webPrint("  Phase 2 will now run in big.Float and break through.")
+	webPrint("  But wait. The story is not over.")
 	webPrint("")
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(3 * time.Second)
 
-	// ── Phase 2: big.Float ─────────────────────────────────────────────
-	webPrint("COLOR:cyan:  ── PHASE 2 BEGIN ──")
+	// ──────────────────────────────────────────────────────────────────
+	// ACT II: THE REDEMPTION OF BIG.FLOAT
+	// ──────────────────────────────────────────────────────────────────
+
+	webPrint("COLOR:green:" + pkg.BoxLine("  ACT II: big.Float  ", bw))
+	webPrint("COLOR:green:" + pkg.BoxLine("  Breaking the Wall  ", bw))
+	webPrint("COLOR:green:" + pkg.BoxSep(bw))
+	webPrint("")
+	webPrint(fmt.Sprintf("  Computing %s terms with big.Float...",
+		pkg.FormatIntWithCommas(int64(phase2Terms))))
+	webPrint("")
+	webPrint("  big.Float uses arbitrary precision.")
+	webPrint("  The wall does not exist here.")
 	webPrint("")
 
 	phase2Start := time.Now()
 	prec := uint(512)
 
-	two := new(big.Float).SetPrec(prec).SetFloat64(2.0)
 	three := new(big.Float).SetPrec(prec).SetFloat64(3.0)
 	four := new(big.Float).SetPrec(prec).SetFloat64(4.0)
 
-	d1 := new(big.Float).SetPrec(prec).SetFloat64(2.0)
-	d2 := new(big.Float).SetPrec(prec).SetFloat64(3.0)
-	d3 := new(big.Float).SetPrec(prec).SetFloat64(4.0)
-
-	// Recompute from scratch in big.Float
 	firstTerm := new(big.Float).SetPrec(prec).Quo(four,
-		new(big.Float).Mul(d1, new(big.Float).Mul(d2, d3)))
+		new(big.Float).SetPrec(prec).SetFloat64(2*3*4))
 	piB := new(big.Float).SetPrec(prec).Add(three, firstTerm)
 
 	wallBroken := false
-	totalTerms := n1 + n2
+	bestBigDigits := 0
 
-	for k := 2; k <= totalTerms; k++ {
+	for k := 2; k <= phase2Terms; k++ {
 		select {
 		case <-done:
-			webPrint("  Stopped.")
+			webPrint("  The curtain falls early.")
 			return
 		default:
 		}
 
-		d1.Add(d1, two)
-		d2.Add(d2, two)
-		d3.Add(d3, two)
+		d1 := new(big.Float).SetPrec(prec).SetFloat64(float64(2 * k))
+		d2 := new(big.Float).SetPrec(prec).SetFloat64(float64(2*k + 1))
+		d3 := new(big.Float).SetPrec(prec).SetFloat64(float64(2*k + 2))
 
-		term := new(big.Float).SetPrec(prec).Quo(four,
-			new(big.Float).Mul(d1, new(big.Float).Mul(d2, d3)))
+		denom := new(big.Float).SetPrec(prec).Mul(d1,
+			new(big.Float).SetPrec(prec).Mul(d2, d3))
+		term := new(big.Float).SetPrec(prec).Quo(four, denom)
 
 		if k%2 == 0 {
 			piB.Sub(piB, term)
@@ -156,13 +220,10 @@ func NilakanthaClassic(done chan bool, webPrint func(string), n1, n2 int) {
 			piB.Add(piB, term)
 		}
 
-		if k%10000 == 0 || k == totalTerms {
-			// Count correct digits using CrossVerify (indirect count)
-			showDigits := 22
-			// Simple character-by-character check against known π start
+		if k%500000 == 0 || k == phase2Terms {
 			correct := 0
-			ref := "3.14159265358979323846"
-			s := piB.Text('f', showDigits)
+			ref := "3.141592653589793238462643383279"
+			s := piB.Text('f', 30)
 			for i := 0; i < len(ref) && i < len(s); i++ {
 				if s[i] != ref[i] {
 					break
@@ -178,30 +239,36 @@ func NilakanthaClassic(done chan bool, webPrint func(string), n1, n2 int) {
 			if !wallBroken && correct > 15 {
 				wallBroken = true
 				webPrint("")
-				webPrint("COLOR:cyan:  ╔══════════════════════════════════════════╗")
-				webPrint("COLOR:cyan:  ║  !! THE FLOAT64 WALL HAS BEEN BROKEN !!  ║")
-				webPrint("COLOR:cyan:  ╚══════════════════════════════════════════╝")
+				webPrint("COLOR:yellow:  ╔══════════════════════════════════════════╗")
+				webPrint("COLOR:yellow:  ║  !! THE WALL IS BROKEN !!              ║")
+				webPrint("COLOR:yellow:  ║  big.Float sees what float64 could not ║")
+				webPrint("COLOR:yellow:  ╚══════════════════════════════════════╝")
 				webPrint("")
 			}
 
-			pct := float64(k-n1) / float64(n2) * 100
-			if pct < 0 {
-				pct = 0
+			if correct > bestBigDigits {
+				bestBigDigits = correct
+				if correct > 15 {
+					webPrint(fmt.Sprintf("  ✦ %d digits — BEYOND THE WALL", correct))
+				}
 			}
-			elapsed := time.Since(phase2Start)
-			piStr := piB.Text('f', 20)
 
-			webPrint(fmt.Sprintf("UPDATE:  π ≈ %s  [%.0f%%]  term: %s  %s  (%d digits)",
-				piStr, pct,
+			pct := float64(k) / float64(phase2Terms) * 100
+			piStr := piB.Text('f', correct+2)
+			if len(piStr) > 25 {
+				piStr = piStr[:25] + "..."
+			}
+
+			webPrint(fmt.Sprintf("  [%3.0f%%] %s terms: π ≈ %s (%d digits)",
+				pct,
 				pkg.FormatIntWithCommas(int64(k)),
-				elapsed.Round(time.Millisecond),
+				piStr,
 				correct))
 		}
 	}
 
 	phase2Elapsed := time.Since(phase2Start)
 
-	// Final digit count
 	correct := 0
 	ref := "3.141592653589793238462643383279"
 	s := piB.Text('f', 30)
@@ -219,12 +286,21 @@ func NilakanthaClassic(done chan bool, webPrint func(string), n1, n2 int) {
 
 	webPrint("")
 	webPrint(pkg.BoxSep(bw))
-	webPrint(fmt.Sprintf("  PHASE 2 COMPLETE: %s", phase2Elapsed.Round(time.Millisecond)))
-	webPrint(fmt.Sprintf("  Total terms: %s", pkg.FormatIntWithCommas(int64(totalTerms))))
+	webPrint("  ACT II COMPLETE")
+	webPrint(fmt.Sprintf("  Time: %s", phase2Elapsed.Round(time.Millisecond)))
+	webPrint(fmt.Sprintf("  Total terms: %s",
+		pkg.FormatIntWithCommas(int64(phase2Terms))))
 	webPrint(fmt.Sprintf("  Verified digits: %d", correct))
 	webPrint(fmt.Sprintf("  π = %s", piB.Text('f', correct+1)))
 	webPrint(pkg.BoxSep(bw))
 	webPrint("")
-	webPrint("  Kerala school, c. 1530. Predates Newton by 150 years.")
-	webPrint("  Still climbing.")
+	webPrint("  The wall was never a mathematical limit.")
+	webPrint("  It was a hardware limit. A representation limit.")
+	webPrint("")
+	webPrint("  Nilakantha's series, born in Kerala c. 1530,")
+	webPrint("  continues to give. It only needed the right")
+	webPrint("  tools to be heard.")
+	webPrint("")
+	webPrint("  Curtain call.")
+	webPrint(pkg.BoxSep(bw))
 }

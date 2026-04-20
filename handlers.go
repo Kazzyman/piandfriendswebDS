@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
 	"piandfriends/algorithms"
 )
 
@@ -77,16 +76,16 @@ func handleRun(w http.ResponseWriter, r *http.Request) {
 		case "wallis":
 			algorithms.Wallis(done, webPrint)
 
-case "gauss":
-    itersStr := r.URL.Query().Get("iters")
-    iters := 8
-    if i, err := strconv.Atoi(itersStr); err == nil && i >= 1 {
-        iters = i
-    }
-    if iters > 16 {
-        iters = 16
-    }
-    algorithms.GaussLegendre(webPrint, iters)
+		case "gauss":
+			itersStr := r.URL.Query().Get("iters")
+			iters := 8
+			if i, err := strconv.Atoi(itersStr); err == nil && i >= 1 {
+				iters = i
+			}
+			if iters > 16 {
+				iters = 16
+			}
+			algorithms.GaussLegendre(webPrint, iters)
 
 		case "gregory":
 			algorithms.GregoryLeibniz(done, webPrint)
@@ -108,23 +107,7 @@ case "gauss":
 			algorithms.Nilakantha(done, webPrint, iters, precision)
 
 		case "nilakantha_classic":
-			n1Str := r.URL.Query().Get("n1")
-			n2Str := r.URL.Query().Get("n2")
-			n1 := 5000
-			n2 := 1000000
-			if v, err := strconv.Atoi(n1Str); err == nil && v >= 100 {
-				n1 = v
-			}
-			if v, err := strconv.Atoi(n2Str); err == nil && v >= 100 {
-				n2 = v
-			}
-			if n1 > 10000 {
-				n1 = 10000
-			}
-			if n2 > 2000000 {
-				n2 = 2000000
-			}
-			algorithms.NilakanthaClassic(done, webPrint, n1, n2)
+			algorithms.NilakanthaClassic(done, webPrint)
 
 		case "roots":
 			radStr := r.URL.Query().Get("radical")

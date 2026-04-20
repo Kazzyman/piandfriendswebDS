@@ -220,13 +220,7 @@
     <hr>
 
     <!-- Nilakantha Classic (Two-Phase) -->
-    <div class="input-group">
-        <label>Phase 1 terms:</label>
-        <input type="number" id="nilaN1" value="5000" min="100" max="10000"><br>
-        <label>Phase 2 terms:</label>
-        <input type="number" id="nilaN2" value="1000000" min="100" max="2000000">
-    </div>
-    <button class="btn" style="background: #73daca; color: #1a1b26;" onclick="start('nilakantha_classic')">
+     <button class="btn" style="background: #73daca; color: #1a1b26;" onclick="start('nilakantha_classic')">
         <strong>Nilakantha: Two-Phase Demo</strong><br>
         Phase 1: float64 (hits wall at ~15 digits)<br>
         Phase 2: big.Float (breaks through)
@@ -324,10 +318,11 @@ No hardcoded reference strings. Just honest math.<span id="cursor"></span></div>
     }
 
     function start(method) {
+        console.log("start called with:", method);
         stop(false);
-        
+
         let url = `/run?method=${method}`;
-        
+
         if (method === 'bbp') {
             url += `&digits=${document.getElementById('bbpDigits').value || 1000}`;
         } else if (method === 'chudnovsky') {
@@ -340,8 +335,8 @@ No hardcoded reference strings. Just honest math.<span id="cursor"></span></div>
             url += `&iters=${document.getElementById('nilaIters').value || 1000000}`;
             url += `&precision=${document.getElementById('nilaPrec').value || 512}`;
         } else if (method === 'nilakantha_classic') {
-            url += `&n1=${document.getElementById('nilaN1').value || 5000}`;
-            url += `&n2=${document.getElementById('nilaN2').value || 1000000}`;
+            // No URL parameters needed—fixed demo
+            // Just use the base URL
         } else if (method === 'roots') {
             const rad = document.getElementById('radical').value;
             const work = document.getElementById('workpiece').value;
@@ -354,18 +349,18 @@ No hardcoded reference strings. Just honest math.<span id="cursor"></span></div>
         statusEl.textContent = '⚡ Connecting...';
 
         currentEventSource = new EventSource(url);
-        
+
         currentEventSource.onmessage = (e) => {
             statusEl.textContent = '⚡ Running...';
             const data = e.data;
-            
+
             const escapeHtml = s => s
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
 
             const cursorSpan = document.getElementById('cursor');
-            
+
             if (data.startsWith('UPDATE:HASRED:')) {
                 const raw = escapeHtml(data.slice(14));
                 const colored = raw.replace(/\?/g, '<span style="color:#f7768e">?</span>');
@@ -379,16 +374,16 @@ No hardcoded reference strings. Just honest math.<span id="cursor"></span></div>
                 const text = escapeHtml(rest.slice(colon + 1));
                 const colorMap = { red: '#f7768e', green: '#9ece6a', yellow: '#e0af68', cyan: '#7dcfff' };
                 const hex = colorMap[color] || color;
-                cursorSpan.outerHTML = (cursorSpan.innerHTML || '') + 
+                cursorSpan.outerHTML = (cursorSpan.innerHTML || '') +
                     '\n<span style="color:' + hex + '">' + text + '</span><span id="cursor"></span>';
             } else if (data.startsWith('LARGE:')) {
-                cursorSpan.outerHTML = (cursorSpan.innerHTML || '') + 
+                cursorSpan.outerHTML = (cursorSpan.innerHTML || '') +
                     '\n<span style="font-size:20px">' + escapeHtml(data.slice(6)) + '</span><span id="cursor"></span>';
             } else {
-                cursorSpan.outerHTML = (cursorSpan.innerHTML || '') + 
+                cursorSpan.outerHTML = (cursorSpan.innerHTML || '') +
                     '\n' + escapeHtml(data) + '<span id="cursor"></span>';
             }
-            
+
             output.scrollTop = output.scrollHeight;
         };
 
@@ -401,19 +396,16 @@ No hardcoded reference strings. Just honest math.<span id="cursor"></span></div>
         };
     }
 
-    function stop(clearScreen = false) {
+    function stop() {
         if (currentEventSource) {
             currentEventSource.close();
             currentEventSource = null;
         }
         statusEl.textContent = '⏹ Stopped';
-        if (clearScreen) {
-            output.innerHTML = `Pi & Friends Web Suite<br>
-By Richard (Rick) Woolley — rewritten with DeepSeek<br>
-github.com/Kazzyman/PiAndFriendsWeb<br><br>
-Select a method from the left to begin.<br>
-All results are cross-verified against independent algorithms.<br>
-No hardcoded reference strings. Just honest math.<span id="cursor"></span>`;
+        const cursorSpan = document.getElementById('cursor');
+        if (cursorSpan) {
+            cursorSpan.outerHTML = '\n\n<span style="color:#f7768e">  ⏹ Calculation stopped by user.</span>\n' + '<span id="cursor"></span>';
+            output.scrollTop = output.scrollHeight;
         }
     }
 
