@@ -60,7 +60,8 @@ func Chudnovsky(done chan bool, webPrint func(string), digits int) {
 	webPrint("")
 
 	// Precision in bits: enough for the requested digits plus margin
-	prec := uint(float64(digits)*math.Log2(10) + float64(digits)*0.1 + 64)
+	// prec := uint(float64(digits)*math.Log2(10) + float64(digits)*0.1 + 64)
+	prec := uint(float64(digits)*math.Log2(10) + float64(digits)*0.2 + 128)
 
 	webPrint(fmt.Sprintf("  Precision: %d bits (~%d decimal digits)",
 		prec, int(float64(prec)/math.Log2(10))))
@@ -147,11 +148,29 @@ func Chudnovsky(done chan bool, webPrint func(string), digits int) {
 	if showDigits > displayCap {
 		showDigits = displayCap
 	}
-	piStr := pi.Text('f', showDigits+2)
+	
+	// Get one extra digit, then chop it
+	fullStr := pi.Text('f', showDigits+3)
+	var baseStr, lastDigit string
+	if len(fullStr) > 2 {
+		baseStr = fullStr[:len(fullStr)-1]
+		lastDigit = fullStr[len(fullStr)-1:]
+	} else {
+		baseStr = fullStr
+		lastDigit = ""
+	}
 
 	webPrint("  RESULT:")
 	webPrint("")
-	webPrint(fmt.Sprintf("  π = %s", piStr))
+	
+	// Display the trusted digits normally
+	webPrint(fmt.Sprintf("  π = %s", baseStr))
+	
+	// Display the uncertain last digit in red using the COLOR protocol
+	if lastDigit != "" {
+		webPrint("COLOR:red:" + lastDigit)
+	}
+	
 	if digits > displayCap {
 		webPrint(fmt.Sprintf("  (... and %s more digits)",
 			pkg.FormatIntWithCommas(int64(digits-displayCap))))
@@ -170,8 +189,19 @@ func Chudnovsky(done chan bool, webPrint func(string), digits int) {
 	webPrint(fmt.Sprintf("  approximately %s correct digits.",
 		pkg.FormatIntWithCommas(int64(expectedDigits))))
 	webPrint("")
-	webPrint("  Spot-checking the first 100 digits against")
-	webPrint("  known π confirms the calculation is correct.")
+	// Verify the trusted digits only (excluding the uncertain last digit)
+	trustedDigits := showDigits
+	if trustedDigits > 0 {
+		trustedDigits = trustedDigits - 1
+	}
+	if trustedDigits < 10 {
+		trustedDigits = 10
+	}
+	// if trustedDigits > 500 {
+	// 	trustedDigits = 500
+	// } // I can scarcely believe that DS had not learned my proclivities 
+	verifyMsg := pkg.VerifyAndReport(pi, trustedDigits, "Chudnovsky") // pi is a big.float of Pi, is what the user asked for, from showDigits, from digits
+	webPrint(verifyMsg)
 
 	webPrint("")
 	webPrint(pkg.BoxSep(50))

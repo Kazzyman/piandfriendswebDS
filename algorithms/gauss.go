@@ -115,7 +115,7 @@ func GaussLegendre(webPrint func(string), iters int) {
 		pi := new(big.Float).SetPrec(precBits).Mul(sumAB, sumAB)
 		pi.Quo(pi, new(big.Float).SetPrec(precBits).Mul(four, t))
 
-		// Show progress
+		// Show progress at key iterations
 		showAt := []int{1, 2, 4, 8, 12, 16}
 		shouldShow := false
 		for _, v := range showAt {
@@ -150,6 +150,11 @@ func GaussLegendre(webPrint func(string), iters int) {
 	digitsToShow := 3000
 	piStr := pi.Text('f', digitsToShow+2)
 	webPrint(fmt.Sprintf("  π = %s", piStr))
+
+	// Cross-verify with BBP
+	verifyDigits := 500
+	verifyMsg := pkg.VerifyAndReport(pi, verifyDigits, "Gauss-Legendre")
+	webPrint(verifyMsg)
 
 	// If more than 3000 digits were produced, note it
 	expectedDigits := 1 << uint(iters)

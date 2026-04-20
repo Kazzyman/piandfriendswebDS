@@ -75,6 +75,7 @@ func BBP(done chan bool, webPrint func(string), digits int) {
 		webPrint(pkg.BoxSep(50))
 		webPrint("  DECIMAL RESULT:")
 		webPrint("")
+
 		decimalStr := decimalPi.Text('f', digits+2)
 		webPrint(fmt.Sprintf("  π (base-10) = %s", decimalStr))
 		webPrint(pkg.BoxSep(50))
@@ -105,6 +106,24 @@ func BBP(done chan bool, webPrint func(string), digits int) {
 		webPrint("  DECIMAL RESULT:")
 		webPrint("")
 
+		// For those who do not trust mathematicians:
+		// Spot-check against a stored 3,000-digit reference.
+		if digits >= 3000 {
+			ref := pkg.PiReference3k
+			computedStr := decimalPi.Text('f', 3000)
+			matches := 0
+			for i := 0; i < len(ref) && i < len(computedStr); i++ {
+				if computedStr[i] != ref[i] {
+					break
+				}
+				matches++
+			}
+			if matches >= 3002 { // "3." plus 3000 digits
+				webPrint("  ✓ Spot-checked against stored 3,000-digit reference.")
+				webPrint("")
+			}
+		}
+
 		displayCap := 3000
 		decimalStr := decimalPi.Text('f', digits+2)
 		if len(decimalStr) > displayCap+2 {
@@ -119,6 +138,7 @@ func BBP(done chan bool, webPrint func(string), digits int) {
 		webPrint(fmt.Sprintf("  Decimal computation time: %s", decimalElapsed.Round(time.Millisecond)))
 		webPrint(pkg.BoxSep(50))
 	}
+
 	webPrint("")
 	webPrint("  The BBP formula famously allows extraction of")
 	webPrint("  any individual hexadecimal digit of π without")

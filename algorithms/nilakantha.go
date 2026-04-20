@@ -150,23 +150,15 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 	piStr := pi.Text('f', showDigits)
 	webPrint(fmt.Sprintf("  π = %s", piStr))
 
-	// Count correct digits
-	correct := 0
-	ref := "3.141592653589793238462643383279"
-	for i := 0; i < len(ref) && i < len(piStr); i++ {
-		if piStr[i] != ref[i] {
-			break
-		}
-		correct++
+	// Verify correct digits
+	verifyDigits := 15
+	if verifyDigits > showDigits {
+		verifyDigits = showDigits
 	}
-	if correct > 2 {
-		correct -= 2
-	} else {
-		correct = 0
-	}
+	verifyMsg := pkg.VerifyAndReport(pi, verifyDigits, "Nilakantha")
+	webPrint(verifyMsg)
 
-	webPrint("")
-	webPrint(fmt.Sprintf("  Verified correct digits: %d", correct))
+	// The rest was not to be replaced, supposedly. According to Deep Seek. 
 	webPrint(fmt.Sprintf("  Terms computed: %s",
 		pkg.FormatIntWithCommas(int64(iters))))
 	webPrint(fmt.Sprintf("  Time: %s", elapsed.Round(time.Millisecond)))
