@@ -77,13 +77,16 @@ func handleRun(w http.ResponseWriter, r *http.Request) {
 		case "wallis":
 			algorithms.Wallis(done, webPrint)
 
-		case "gauss":
-			itersStr := r.URL.Query().Get("iters")
-			iters := 8
-			if i, err := strconv.Atoi(itersStr); err == nil && i >= 1 && i <= 12 {
-				iters = i
-			}
-			algorithms.GaussLegendre(webPrint, iters)
+case "gauss":
+    itersStr := r.URL.Query().Get("iters")
+    iters := 8
+    if i, err := strconv.Atoi(itersStr); err == nil && i >= 1 {
+        iters = i
+    }
+    if iters > 16 {
+        iters = 16
+    }
+    algorithms.GaussLegendre(webPrint, iters)
 
 		case "gregory":
 			algorithms.GregoryLeibniz(done, webPrint)

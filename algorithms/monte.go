@@ -19,25 +19,55 @@ func MonteCarlo(webPrint func(string), gridSize int) {
 	webPrint(pkg.BoxLine("  Rick's Second Favorite  ", 50))
 	webPrint(pkg.BoxSep(50))
 	webPrint("")
-	webPrint(fmt.Sprintf("  Grid size: %d × %d = %s points",
-		gridSize, gridSize,
-		pkg.FormatIntWithCommas(int64(gridSize*gridSize))))
+	webPrint("  Imagine throwing darts randomly at a square")
+	webPrint("  board with a quarter-circle inscribed inside.")
+	webPrint("  The ratio of darts landing inside the circle")
+	webPrint("  to the total thrown converges to π/4.")
+	webPrint("")
+	webPrint("  Area of quarter-circle: π/4")
+	webPrint("  Area of square: 1")
+	webPrint("  Ratio = π/4  →  π = 4 × (inside / total)")
+	webPrint("")
+	webPrint("  Instead of darts, we sample points on a grid.")
+	webPrint("  For each point (x, y) in the unit square,")
+	webPrint("  if x² + y² ≤ 1, the point is inside.")
 	webPrint("")
 
-	if gridSize > 119999 {
-		webPrint("  That grid size makes me puke!")
-		webPrint("  Please choose something smaller than 120,000.")
-		return
+	// Cap grid size for web demo
+	maxGrid := 50000
+	if gridSize > maxGrid {
+		webPrint(fmt.Sprintf("  Grid size capped at %s for web demo.",
+			pkg.FormatIntWithCommas(int64(maxGrid))))
+		gridSize = maxGrid
+	}
+	if gridSize < 100 {
+		gridSize = 100
+	}
+
+	totalPoints := gridSize * gridSize
+	webPrint(fmt.Sprintf("  Grid size: %s × %s = %s points",
+		pkg.FormatIntWithCommas(int64(gridSize)),
+		pkg.FormatIntWithCommas(int64(gridSize)),
+		pkg.FormatIntWithCommas(int64(totalPoints))))
+	webPrint("")
+
+	if totalPoints > 100000000 {
+		webPrint("  That's a lot of darts. This may take a while...")
+		webPrint("")
 	}
 
 	start := time.Now()
 
 	inside := big.NewInt(0)
-	total := big.NewInt(int64(gridSize * gridSize))
 
 	// Step size for grid sampling
 	step := 1.0 / float64(gridSize)
 	halfStep := step / 2.0
+
+	reportInterval := gridSize / 10
+	if reportInterval < 1 {
+		reportInterval = 1
+	}
 
 	for i := 0; i < gridSize; i++ {
 		x := float64(i)*step + halfStep
@@ -50,10 +80,10 @@ func MonteCarlo(webPrint func(string), gridSize int) {
 			}
 		}
 
-		// Progress every 10% of rows
-		if gridSize > 100 && i%(gridSize/10) == 0 && i > 0 {
-			pct := float64(i) / float64(gridSize) * 100
+		// Progress reporting
+		if i > 0 && i%reportInterval == 0 {
 			elapsed := time.Since(start)
+			pct := float64(i) / float64(gridSize) * 100
 			webPrint(fmt.Sprintf("  ... %.0f%% complete (%s)",
 				pct, elapsed.Round(time.Millisecond)))
 		}
@@ -61,7 +91,7 @@ func MonteCarlo(webPrint func(string), gridSize int) {
 
 	// π ≈ 4 × (inside / total)
 	insideFloat := new(big.Float).SetInt(inside)
-	totalFloat := new(big.Float).SetInt(total)
+	totalFloat := new(big.Float).SetInt(big.NewInt(int64(totalPoints)))
 	ratio := new(big.Float).Quo(insideFloat, totalFloat)
 	pi := new(big.Float).Mul(ratio, big.NewFloat(4.0))
 
@@ -69,11 +99,12 @@ func MonteCarlo(webPrint func(string), gridSize int) {
 
 	webPrint("")
 	webPrint(pkg.BoxSep(50))
+	webPrint("  RESULT:")
+	webPrint("")
 
 	piStr := pi.Text('f', 15)
 	webPrint(fmt.Sprintf("  Estimated π: %s", piStr))
 
-	// Show float64 version for comparison
 	piFloat, _ := pi.Float64()
 	webPrint(fmt.Sprintf("  math.Pi:     %0.15f", math.Pi))
 	webPrint(fmt.Sprintf("  Difference:  %0.15f", math.Abs(piFloat-math.Pi)))
@@ -92,12 +123,32 @@ func MonteCarlo(webPrint func(string), gridSize int) {
 	}
 
 	webPrint(fmt.Sprintf("  Correct digits: %d", correct))
-	webPrint(fmt.Sprintf("  Time: %s", elapsed.Round(time.Millisecond)))
 	webPrint(fmt.Sprintf("  Points sampled: %s",
-		pkg.FormatIntWithCommas(int64(gridSize*gridSize))))
+		pkg.FormatIntWithCommas(int64(totalPoints))))
+	webPrint(fmt.Sprintf("  Time: %s", elapsed.Round(time.Millisecond)))
+	webPrint("")
+	webPrint(pkg.BoxSep(50))
 	webPrint("")
 	webPrint("  The Monte Carlo method was pioneered during")
-	webPrint("  the Manhattan Project by Ulam and von Neumann.")
-	webPrint("  It is beautiful precisely because it is inefficient.")
+	webPrint("  the Manhattan Project in the 1940s by")
+	webPrint("  Stanislaw Ulam and John von Neumann.")
+	webPrint("")
+	webPrint("  Ulam conceived the idea while recovering from")
+	webPrint("  illness and playing solitaire. He wondered")
+	webPrint("  what the probability of winning a particular")
+	webPrint("  solitaire layout was, and realized he could")
+	webPrint("  simply simulate many random games.")
+	webPrint("")
+	webPrint("  They named it after the Monte Carlo casino")
+	webPrint("  in Monaco—because at its heart, it is a game")
+	webPrint("  of chance.")
+	webPrint("")
+	webPrint("  Why is it Rick's second favorite?")
+	webPrint("  Because no equations, no series, no clever")
+	webPrint("  algebra. Just pure randomness, applied")
+	webPrint("  repeatedly, converging on one of the most")
+	webPrint("  profound constants in mathematics.")
+	webPrint("")
+	webPrint("  It is inefficient. It is beautiful.")
 	webPrint(pkg.BoxSep(50))
 }
