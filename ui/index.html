@@ -152,6 +152,21 @@
     <button class="btn btn-sm" style="background: #f7768e;" onclick="stop()">⏹ Stop</button>
     <hr>
 
+    <!-- Monte Carlo -->
+    <div class="input-group">
+        <label>Grid size:</label>
+        <input type="number" id="gridSize" value="4000" min="100" max="50000">
+    </div>
+    <button class="btn" style="background: #9ece6a; color: #1a1b26;" onclick="start('monte')">
+        <strong>Monte Carlo Method</strong><br>
+        Random sampling. Rick's second favorite.<br>
+        Inefficient but beautiful.
+    </button>
+    <button class="btn btn-sm" onclick="showExplainer('monte')">📖 How it works</button>
+    <button class="btn btn-sm" onclick="copyOutput()">📋 Copy Output</button>
+    <button class="btn btn-sm" style="background: #f7768e;" onclick="stop()">⏹ Stop</button>
+    <hr>
+
     <!-- Spigot -->
     <button class="btn" style="background: #e0af68; color: #1a1b26;" onclick="start('spigot')">
         <strong>Spigot Algorithm (1995)</strong><br>
@@ -191,27 +206,12 @@
     <button class="btn btn-sm" style="background: #f7768e;" onclick="stop()">⏹ Stop</button>
     <hr>
 
-    <!-- Monte Carlo -->
-    <div class="input-group">
-        <label>Grid size:</label>
-        <input type="number" id="gridSize" value="4000" min="100" max="50000">
-    </div>
-    <button class="btn" style="background: #9ece6a; color: #1a1b26;" onclick="start('monte')">
-        <strong>Monte Carlo Method</strong><br>
-        Random sampling. Rick's second favorite.<br>
-        Inefficient but beautiful.
-    </button>
-    <button class="btn btn-sm" onclick="showExplainer('monte')">📖 How it works</button>
-    <button class="btn btn-sm" onclick="copyOutput()">📋 Copy Output</button>
-    <button class="btn btn-sm" style="background: #f7768e;" onclick="stop()">⏹ Stop</button>
-    <hr>
-
     <!-- Gauss-Legendre -->
     <div class="input-group">
         <label>Iterations (max 16):</label>
         <input type="number" id="gaussIters" value="12" min="1" max="16">
     </div>
-    <button class="btn" style="background: #4fd1c5; color: #1a1b26;" onclick="start('gauss')">
+    <button class="btn" style="background: #7aa2f7; color: #1a1b26;" onclick="start('gauss')">
         <strong>Gauss-Legendre</strong><br>
         Quadratic convergence—digits double each iteration.<br>
         Up to ~32,000 digits at 16 iterations.
@@ -233,7 +233,7 @@
         π = 3 + 4/(2·3·4) - 4/(4·5·6) + ...
     </button>
     <button class="btn btn-sm" onclick="copyOutput()">📋 Copy Output</button>
-    <button class="btn btn-sm" style="background: #78f776e8;" onclick="stop()">⏹ Stop</button>
+    <button class="btn btn-sm" style="background: #f7768e;" onclick="stop()">⏹ Stop</button>
     <hr>
 
     <!-- Nilakantha Classic (Two-Phase) -->
@@ -452,302 +452,304 @@ No hardcoded reference strings. Just honest math.<span id="cursor"></span></div>
         });
     }
 
-    function showExplainer(type) {
-        stop();
-        const lines = {
-            pythagorean: [
-                "THE PYTHAGOREAN THEOREM",
-                "",
-                "── Bhaskara's Proof (12th Century India) ──",
-                "",
-                "Begin with a square of area c². Partially fill",
-                "it with four congruent right triangles, each",
-                "with right angle opposite side c. Sides are a,",
-                "b, and c (hypotenuse). A small square remains",
-                "in the center—ignore it.",
-                "",
-                "Detach and slide two adjacent triangles to the",
-                "opposite sides of the parent square. Two",
-                "attached squares emerge: a×a and b×b.",
-                "",
-                "We can clearly see: c² = a² + b²",
-                "",
-                "── Garfield's Proof (1876, U.S. President) ──",
-                "",
-                "Begin with a right triangle. Clone it and place",
-                "it such that side a of the first is colinear",
-                "with side c of the second. Connect the ends to",
-                "form an isosceles right triangle (c, c, x).",
-                "",
-                "The resulting shape is a trapezoid of dimensions",
-                "a, a+b, b, and x.",
-                "",
-                "Area of trapezoid: A = (a+b) × ½(a+b) = ½(a+b)²",
-                "",
-                "Area is also: ab + ½c² (two right triangles plus",
-                "the isosceles triangle).",
-                "",
-                "Equate: ½(a+b)² = ab + ½c²",
-                "Multiply by 2: (a+b)² = 2ab + c²",
-                "Expand: a² + 2ab + b² = 2ab + c²",
-                "Cancel 2ab: a² + b² = c²",
-                "",
-                "Many other proofs exist. These two are",
-                "particularly elegant.",
-            ],
-            erdosBio: [
-                "THE ERDŐS–BORWEIN CONSTANT",
-                "",
-                "E = Σ 1/(2ⁿ - 1)  for n = 1 to ∞",
-                "",
-                "This is the sum of the reciprocals of the",
-                "Mersenne numbers (numbers of the form 2ⁿ - 1).",
-                "",
-                "── Paul Erdős (1913–1996) ──",
-                "",
-                "Paul Erdős was one of the most prolific",
-                "mathematicians of the 20th century. He published",
-                "around 1,500 mathematical papers—a figure that",
-                "remains unsurpassed.",
-                "",
-                "He believed mathematics to be a social activity,",
-                "living an itinerant lifestyle with the sole",
-                "purpose of writing papers with others. He worked",
-                "with over 500 collaborators.",
-                "",
-                "His eccentric lifestyle was legendary. He had no",
-                "permanent home. Time magazine called him",
-                "'The Oddball's Oddball.'",
-                "",
-                "He devoted his waking hours to mathematics. His",
-                "death came hours after solving a geometry problem",
-                "at a conference in Warsaw.",
-                "",
-                "── The Erdős Number ──",
-                "",
-                "Erdős's prolific co-authorship led to the",
-                "Erdős number: steps in the shortest path between",
-                "a mathematician and Erdős via co-authorships.",
-                "",
-                "Erdős himself: 0. His 500+ co-authors: 1.",
-                "Their co-authors: 2, and so on.",
-                "",
-                "── Peter Borwein (1953–2020) ──",
-                "",
-                "Peter Borwein was a Canadian mathematician,",
-                "co-author of the paper presenting the BBP",
-                "algorithm for π. With his brother Jonathan",
-                "and David Bailey, he helped popularize methods",
-                "for computing π to billions of digits.",
-                "",
-                "The Erdős–Borwein constant connects these two",
-                "remarkable figures.",
-            ],
-            spigot: [
-                "SPIGOT ALGORITHM — HOW THE SAUSAGE IS MADE",
-                "",
-                "Imagine building π using only whole numbers—",
-                "no decimal points or fractions allowed.",
-                "That's the Spigot method.",
-                "",
-                "── Why Integers Only Matters ──",
-                "",
-                "Floating-point math introduces rounding errors",
-                "that compound as you request more digits.",
-                "Spigot never uses decimals. Every digit is exact.",
-                "",
-                "── Uncertain Digits (the red ?s) ──",
-                "",
-                "Sometimes the algorithm doesn't know if a digit",
-                "should be 9 or 0. It shows a red '?' meaning:",
-                "'I think this is 9, but a carry might change it.'",
-                "",
-                "It's not guessing—the uncertainty is real.",
-                "",
-                "── What is a Carry? ──",
-                "",
-                "Like adding by hand: 999 + 1 = 1000.",
-                "The 9s flip to 0s, and the digit to the left",
-                "increases by 1.",
-                "",
-                "When a carry happens:",
-                "  • All uncertain 9s become 0s.",
-                "  • The digit before them increments.",
-                "",
-                "── The Feynman Point ──",
-                "",
-                "At position 762, π contains six consecutive 9s.",
-                "Feynman joked he'd memorize π up to there so",
-                "he could say '...nine nine nine nine nine nine,",
-                "and so on!'",
-                "",
-                "In Run 2, watch those six digits hold as",
-                "'??????' before resolving to 999999.",
-                "",
-                "── Origin ──",
-                "",
-                "Rabinowitz & Wagon, American Mathematical",
-                "Monthly, 1995. Rewritten by Richard Woolley,",
-                "refined with DeepSeek.",
-            ],
-            bbp: [
-                "BAILEY–BORWEIN–PLOUFFE (BBP) FORMULA",
-                "",
-                "── The Discovery ──",
-                "",
-                "In 1995, Bailey, Borwein, and Plouffe published",
-                "a formula that stunned the mathematical world.",
-                "",
-                "It was found by a computer running the PSLQ",
-                "integer relation algorithm—a 'computer-first'",
-                "discovery.",
-                "",
-                "── The Formula ──",
-                "",
-                "π = Σ (1/16ᵏ) × [4/(8k+1) - 2/(8k+4)",
-                "     - 1/(8k+5) - 1/(8k+6)]",
-                "",
-                "── The Proof ──",
-                "",
-                "Mathematicians proved it using calculus—",
-                "integration of a carefully chosen rational",
-                "function. Once proved, it is exactly correct,",
-                "with the same certainty as 2+2=4.",
-                "",
-                "── The Astonishing Property ──",
-                "",
-                "BBP can compute any individual hexadecimal",
-                "digit of π without knowing the digits before it.",
-                "No other formula for π can do this.",
-                "",
-                "── This Implementation ──",
-                "",
-                "This demo computes π in hex, displays the hex",
-                "result, then converts to decimal for display.",
-                "For large requests, it recomputes in decimal",
-                "from scratch.",
-            ],
-            monte: [
-                "THE MONTE CARLO METHOD",
-                "",
-                "── The Idea ──",
-                "",
-                "Throw darts randomly at a square with an",
-                "inscribed quarter-circle. The ratio of darts",
-                "inside the circle to total darts converges",
-                "to π/4.",
-                "",
-                "Area of quarter-circle: π/4. Area of square: 1.",
-                "Ratio = π/4  →  π = 4 × (inside / total).",
-                "",
-                "── How the Code Does It ──",
-                "",
-                "We sample points on a grid. For each (x, y),",
-                "if x² + y² ≤ 1, the point is inside.",
-                "",
-                "── Why Is It So Slow? ──",
-                "",
-                "Each additional correct digit requires ~100×",
-                "more points. Four digits in seconds. Seven",
-                "digits in an hour.",
-                "",
-                "── Why Do It At All? ──",
-                "",
-                "Because it is beautiful. No equations, no",
-                "series—just randomness converging on a",
-                "universal constant.",
-                "",
-                "── History ──",
-                "",
-                "Pioneered by Ulam and von Neumann during the",
-                "Manhattan Project. Ulam conceived it while",
-                "recovering from illness and playing solitaire.",
-                "",
-                "Named after the Monte Carlo casino—at its",
-                "heart, a game of chance.",
-                "",
-                "Rick's second-favorite method.",
-            ],
-            roots: [
-                "ROOTS VIA PERFECT POWERS",
-                "",
-                "Original concept and algorithm: Richard Woolley.",
-                "",
-                "── The Core Insight ──",
-                "",
-                "If A and B are perfect powers and A/B ≈ target,",
-                "then √A / √B ≈ √target.",
-                "",
-                "Example: √11. 49/4 = 12.25 (high), 36/4 = 9 (low).",
-                "So √11 ≈ 7/2 = 3.5. Search larger squares for",
-                "better approximations.",
-                "",
-                "── Ancient Origins ──",
-                "",
-                "The same insight ancient Greeks used to find",
-                "√2 ≈ 7/5 (since 49/25 = 1.96 ≈ 2).",
-                "",
-                "── The Delian Problem ──",
-                "",
-                "Computing ∛2 solves a problem that tormented",
-                "Greek geometers for over 2,000 years: double",
-                "a cube's volume using only compass and",
-                "straightedge.",
-                "",
-                "Impossible. Proved by Pierre Wantzel in 1837.",
-                "This algorithm solves it in milliseconds.",
-                "Archimedes would have wept.",
-            ],
-            chud: [
-                "THE CHUDNOVSKY ALGORITHM",
-                "",
-                "── The Algorithm ──",
-                "",
-                "Developed by David and Gregory Chudnovsky in",
-                "the late 1980s. Each term adds ~14 correct",
-                "decimal digits.",
-                "",
-                "Based on modular equations and the j-invariant",
-                "from elliptic function theory.",
-                "",
-                "── World Records ──",
-                "",
-                "Used for nearly every modern world-record π",
-                "calculation.",
-                "",
-                "As of November 2025: 314 trillion digits,",
-                "set by StorageReview.",
-                "",
-                "Machine: Dell PowerEdge R7725, 192 cores,",
-                "1.5 TB RAM, ~1 PB NVMe storage.",
-                "Software: y-cruncher. Runtime: 110 days.",
-                "",
-                "── The 314 Trillionth Digit ──",
-                "",
-                "It is 5.",
-                "",
-                "── This Implementation ──",
-                "",
-                "Capped at 50,000 digits for web demo.",
-                "Cross-verified against BBP.",
-            ],
-        };
-        
-        if (lines[type]) {
-            output.innerHTML = '<span id="cursor"></span>';
-            let i = 0;
-            function printNext() {
-                if (i >= lines[type].length) return;
-                const c = document.getElementById('cursor');
-                const escaped = lines[type][i].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                c.outerHTML = '\n' + escaped + '<span id="cursor"></span>';
-                output.scrollTop = output.scrollHeight;
-                i++;
-                setTimeout(printNext, 20);
+        function showExplainer(type) {
+            stop();
+
+            const explainers = {
+                pythagorean: `THE PYTHAGOREAN THEOREM
+
+── Bhaskara's Proof (12th Century India) ──
+
+We begin with a square of area c². We then partially fill that square with four congruent right triangles each with its right angle opposite to one of the sides 'c'. Each of the four congruent triangles now have sides c, a, and b. 'c' being the hypotenuse of each; 'a' being the shortest side and 'b' being the longer of sides 'a' and 'b'. Thus leaving a small square in the center, which we can ignore.
+
+Next, we detach and slide two adjacent right triangles, each to its opposite side of the parent square. We now have two attached squares a × a and b × b. We can then clearly see that c² = a² + b².
+
+── The Pythagorean theorem is thereby derived, per Bhaskara ──
+
+── Garfield's Proof (1876, U.S. President) ──
+
+Apparently it was not until 1876 that James Garfield (yes, the former U.S. president) discovered the following geometric proof of the Pythagorean theorem.
+
+He began with a right triangle similar to those we encountered from Bhaskara. But any shape of right triangle will suffice for his proof. Next, he cloned a second triangle placing it such that its most-acutely-angled point touches the other triangle's least-acutely-angled point such that side 'a' of the first is colinear with side 'c' of the second triangle. Thus creating the potential of a new triangle: an isosceles right triangle of dimensions c, c, x.
+
+After having converted that potential to an actual we are left with a trapezoid. That is, a rectangle mated to a right triangle; in this case a trapezoid of dimensions a, a+b, b, and x.
+
+We know that for any trapezoid the area is equal to the height [in this case a+b] times the average of the lengths of the two adjacent sides [in this case, half of the sum of a+b]. Which is to say that, in the case of OUR trapezoid, the Area is: A = (a+b) × ½(a+b) — Or — A = ½(a+b)².
+
+But the area of this particular trapezoid that we have constructed is, obviously, also a×b (the combined area of the initial two right triangles), plus ½c². Or: A = ab + ½c².
+
+A new equality can then be constructed from the two above equalities:
+
+    ½(a+b)² = ab + ½c²
+
+And reducing it thusly:
+
+        (a+b)² = 2ab + c²
+ a² + 2ab + b² = 2ab + c²
+       a² + b² = c²
+
+... proves the Pythagorean per Garfield; though, obviously, many other proofs do exist.`,
+
+                erdosBio: `THE ERDŐS–BORWEIN CONSTANT
+
+E = Σ 1/(2ⁿ - 1)  for n = 1 to ∞
+
+This is the sum of the reciprocals of the Mersenne numbers (numbers of the form 2ⁿ - 1).
+
+── Paul Erdős (1913–1996) ──
+
+Paul Erdős was one of the most prolific mathematicians of the 20th century. He published around 1,500 mathematical papers—a figure that remains unsurpassed.
+
+He believed mathematics to be a social activity, living an itinerant lifestyle with the sole purpose of writing papers with other mathematicians. He worked with over 500 collaborators.
+
+His eccentric lifestyle was legendary. He had no permanent home, traveling from university to university with a suitcase, staying with colleagues. Time magazine called him "The Oddball's Oddball."
+
+He devoted his waking hours to mathematics, even into his later years. His death came only hours after he solved a geometry problem at a conference in Warsaw.
+
+── The Erdős Number ──
+
+Erdős's prolific co-authorship led to the creation of the Erdős number: the number of steps in the shortest path between a mathematician and Erdős in terms of co-authorships.
+
+Erdős himself has Erdős number 0.
+His 500+ direct co-authors have Erdős number 1.
+Their co-authors have Erdős number 2, and so on.
+
+── Peter Borwein (1953–2020) ──
+
+Peter Borwein was a Canadian mathematician and professor at Simon Fraser University. He is best known as a co-author of the paper that presented the Bailey–Borwein–Plouffe (BBP) algorithm for π.
+
+Along with his brother Jonathan Borwein and David H. Bailey, he helped popularize methods for computing π to billions of digits.
+
+The Erdős–Borwein constant connects these two remarkable figures in mathematical history.`,
+
+                spigot: `SPIGOT ALGORITHM — HOW THE SAUSAGE IS MADE
+
+Imagine you're building the number π (3.14159...) using only whole numbers — no decimal points or fractions allowed at any step. That's what this "Spigot" method does. It's like squeezing digits of π out of a machine that only knows how to add, subtract, and multiply whole numbers.
+
+── Why "integers only" matters ──
+
+Most computer programs calculate π using floating-point numbers (numbers with decimal points). But floating-point math can introduce tiny rounding errors that get worse the more digits you ask for.
+
+The Spigot algorithm never uses decimals. It works entirely with integers. This guarantees that every digit it produces is exact — no rounding errors can ever creep in.
+
+── The "uncertain" digits (the red ?s) ──
+
+While it's calculating, the algorithm sometimes doesn't know for sure whether a digit should be a 9 or a 0.
+
+When it thinks a digit might be 9, it shows a red "?" instead. This means: "I think this is probably a 9… but later arithmetic might create a carry that forces me to change it to 0."
+
+It's not guessing or faking it — the uncertainty is real. The program is genuinely waiting to see what happens further down the line.
+
+── What is a "carry"? ──
+
+Think of it like adding numbers by hand:
+
+     999
+   +   1
+   -----
+    1000
+
+The 9s all flip to 0s, and the digit to the left increases by 1.
+
+When a carry happens in the Spigot algorithm:
+  • All the uncertain 9s (the red ?s) turn into 0s.
+  • The digit just before them gets increased by 1.
+
+You get to watch this happen live in Run 2. The red ?s sit there for a moment, then — when the carry is confirmed — they flip to the correct digit.
+
+── Why show the uncertainty? ──
+
+Most pi calculators hide all this and just show the final digits instantly.
+
+This demo deliberately slows down at that point and clearly shows you the honest internal struggle of the algorithm. The red ?s and the slow re-draws let you see the math thinking out loud in real time.
+
+It's like watching a tightrope walker who sometimes wobbles — you get to see the wobble before they safely reach the other side.
+
+── The Feynman Point ──
+
+At decimal position 762, π contains six consecutive 9s: ...4999999...
+
+Richard Feynman once joked that he wanted to memorize π up to the 762nd digit so he could recite it and end with "...nine nine nine nine nine nine, and so on!" — implying that π continues with 9s forever.
+
+It doesn't, of course. But the moment is famous. In Run 2, you'll see those six digits hold as red "??????" while the algorithm sweats over a possible carry. When they resolve to 999999, we celebrate.
+
+── Origin ──
+
+The Rabinowitz–Wagon spigot algorithm was published in the American Mathematical Monthly in 1995. It was a breakthrough in elegant, exact π computation.
+
+This implementation was rewritten by Richard Woolley and refined with architectural assistance from DeepSeek.`,
+
+                bbp: `BAILEY–BORWEIN–PLOUFFE (BBP) FORMULA
+
+── The Discovery ──
+
+In 1995, David H. Bailey, Peter Borwein, and Simon Plouffe published a formula that stunned the mathematical world.
+
+The formula itself was not discovered by human insight alone. It was found by a computer program running the PSLQ integer relation algorithm—searching for linear relationships between mathematical constants.
+
+This was a "computer-first" discovery. The machine found a pattern that humans had missed for centuries.
+
+── The Formula ──
+
+π = Σ (1/16ᵏ) × [ 4/(8k+1) - 2/(8k+4) - 1/(8k+5) - 1/(8k+6) ]
+
+Summed from k=0 to ∞.
+
+── The Proof ──
+
+How do mathematicians know an infinite series really equals π? They prove it.
+
+A mathematical proof is a watertight logical argument. If the premises are true and every step follows, the conclusion must be true. No exceptions. No "probably."
+
+The BBP formula was proved using calculus—specifically, integration of a carefully chosen rational function. Once proved, it is known to be exactly correct, with the same certainty as 2 + 2 = 4.
+
+── The Astonishing Property ──
+
+BBP does not just compute π sequentially from the first digit. It can compute any individual hexadecimal (base-16) digit of π — say, the trillionth — without knowing any of the digits before it.
+
+No other formula for π can do this.
+
+This property follows directly from the proof. The same argument that shows the formula equals π also shows why individual digits can be extracted independently.
+
+── This Implementation ──
+
+This demo computes π in hexadecimal, displays the hex result, and then converts to decimal. For large requests where conversion would be inaccurate, it recomputes from scratch in base-10 and displays that result.
+
+The BBP formula is also used throughout this suite as a cross-verification tool. When other algorithms finish, their results are checked against BBP to confirm correctness—no hardcoded reference strings required.`,
+
+                monte: `THE MONTE CARLO METHOD
+
+── The Idea ──
+
+Imagine throwing darts randomly at a square board that has a circle drawn inside it, touching all four sides. If you throw enough darts, the ratio of darts landing inside the circle to the total number thrown will converge toward π/4.
+
+Why? Because the area of the circle is π×r² and the area of the square is (2r)² = 4r². So the ratio of circle area to square area is exactly π/4. Random darts sample that ratio naturally.
+
+── How the Code Does It ──
+
+Instead of darts, we sample points on a grid. For each point (x, y) in the unit square, we check whether x² + y² ≤ 1. If so, the point is inside the quarter-circle.
+
+After millions of points: π ≈ 4 × (points inside / total points)
+
+── Why Is It So Slow? ──
+
+Random sampling is brutally inefficient for computing π. Each additional correct digit requires roughly 100 times more points.
+
+Four digits in seconds. Seven digits in an hour. Compare that to Chudnovsky, which gets thousands of digits in the same time.
+
+── Why Do It At All? ──
+
+Because it is beautiful. No equations, no series, no clever algebra. Just pure randomness, applied repeatedly, converging on one of the most profound constants in all of mathematics.
+
+It is a demonstration that order can emerge from chaos—that a universal constant is baked into the fabric of probability itself.
+
+── History ──
+
+The Monte Carlo method was pioneered during the Manhattan Project in the 1940s by Stanislaw Ulam and John von Neumann. They named it after the famous casino in Monaco—because at its heart, it is a game of chance.
+
+Ulam conceived the idea while recovering from illness and playing solitaire. He wondered what the probability of a successful Canfield solitaire layout was. Rather than attempt combinatorial calculations, he realized he could simply simulate many random games and count the wins.
+
+The rest is history.
+
+This is Rick Woolley's second-favorite method.`,
+
+                roots: `ROOTS VIA PERFECT POWERS
+
+Original concept and algorithm: Richard (Rick) Woolley.
+
+── The Core Insight ──
+
+If A and B are both perfect powers (squares or cubes) and A/B is close to our target number N, then the ratio of their roots is a close approximation to the root of N.
+
+Example for square roots:
+  We want √11.
+  We notice that 49/4 = 12.25 (close to 11, but a bit high) and that 36/4 = 9.0 (close to 11, but a bit low).
+
+So √11 ≈ 7/2 = 3.5 (close to the actual 3.316...). For more precision we can keep searching for larger perfect squares whose ratio is even closer to 11.
+
+Eventually we find e.g. 2116/196 = 10.795... and 2209/196 = 11.27... giving √11 ≈ 46/14 = 3.2857... and 47/14 = 3.357... Averaging the high and low gives 3.321—very close to the actual 3.316...
+
+── Ancient Origins ──
+
+This method is based on the same insight ancient Greek mathematicians used to discover that √2 ≈ 7/5, because 49/25 = 1.96 ≈ 2.
+
+The Greeks did not have our decimal system. They worked with ratios of whole numbers. This algorithm is a direct descendant of their way of thinking.
+
+── Why Some Numbers Are Harder ──
+
+√11 = 3.3166... has a clean rational approximation lurking in the perfect square table, so the algorithm finds it quickly and precisely.
+
+√999983 ≈ 999.9915 sits frustratingly close to the integer 1000, so the table finds 1000/1 first and nothing better fits within any reasonable precision window. The algorithm is working correctly—it just found the most obvious approximation rather than a subtle one.
+
+This is not a weakness. It is a window into the nature of rational approximations. Numbers nearest to perfect squares are actually the hardest cases, not the easiest. Numbers like 11, 23, and 491, whose square roots are genuinely irrational and not close to any simple fraction, are where the algorithm really shines.
+
+── The Delian Problem ──
+
+When you compute ∛2 (the cube root of 2), you are solving a problem that tormented ancient Greek geometers for over two thousand years.
+
+The Delian Problem: given a cube, construct a second cube with exactly twice the volume—using only compass and straightedge.
+
+This requires constructing ∛2. The Greeks could not do it. We now know it is impossible. Pierre Wantzel proved this in 1837.
+
+This algorithm solves it in milliseconds. Archimedes would have wept.`,
+
+                chud: `THE CHUDNOVSKY ALGORITHM
+
+── The Algorithm ──
+
+Developed by David and Gregory Chudnovsky in the late 1980s, this algorithm converges extremely rapidly—each term adds approximately 14 correct decimal digits.
+
+It is based on the theory of modular equations and the j-invariant from elliptic function theory. The mathematics is deep, but the result is simple: an extraordinarily efficient way to compute π.
+
+── World Records ──
+
+The Chudnovsky algorithm has been used for nearly every world-record π calculation of the modern era.
+
+As of November 2025, the record stands at 314 trillion digits, set by the team at StorageReview.
+
+The machine: a single Dell PowerEdge R7725 server, equipped with two AMD EPYC processors (192 cores total), 1.5 terabytes of DDR5 RAM, and 40 high-capacity NVMe solid-state drives.
+
+Total storage: approximately one petabyte.
+Software: y-cruncher, an open-source multi-threaded π benchmark program.
+
+Runtime: approximately 110 days of continuous computation, with zero downtime.
+
+── The Limiting Factor ──
+
+At this scale, the CPU is no longer the bottleneck. The limiting factor is storage speed and capacity. Every intermediate result must be written to and read from disk billions of times.
+
+── The 314 Trillionth Digit ──
+
+If you were wondering: it is 5.
+
+── This Implementation ──
+
+This demo runs the Chudnovsky algorithm using Go's math/big package for arbitrary precision. It is capped at 50,000 digits to keep the web experience responsive.
+
+Results are cross-verified against the BBP formula to ensure correctness.`
+            };
+
+            if (explainers[type]) {
+                output.innerHTML = '<span id="cursor"></span>';
+                const text = explainers[type];
+                const cursorSpan = document.getElementById('cursor');
+
+                // Split by newline to preserve blank lines, but let browser wrap naturally
+                const lines = text.split('\n');
+                let i = 0;
+
+                function printNext() {
+                    if (i >= lines.length) return;
+                    const c = document.getElementById('cursor');
+                    const escaped = lines[i].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    c.outerHTML = '\n' + escaped + '<span id="cursor"></span>';
+                    output.scrollTop = output.scrollHeight;
+                    i++;
+                    setTimeout(printNext, 10);
+                }
+                printNext();
             }
-            printNext();
         }
-    }
 
     window.onload = () => {
         statusEl.textContent = '⚡ System Ready';
