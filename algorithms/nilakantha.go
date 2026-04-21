@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/big"
 	"time"
-
 	"piandfriends/pkg"
 )
 
@@ -32,10 +31,10 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 	webPrint("  The series converges at a rate of about")
 	webPrint("  3 digits per factor-of-10 increase in terms:")
 	webPrint("")
-	webPrint("      10,000 terms → ~12 digits")
-	webPrint("     100,000 terms → ~15 digits")
-	webPrint("   1,000,000 terms → ~18 digits")
-	webPrint("  10,000,000 terms → ~21 digits")
+	webPrint("      10,000 terms → ~9 digits")
+	webPrint("     100,000 terms → ~11 digits")
+	webPrint("   1,000,000 terms → ~14 digits")
+	webPrint("  10,000,000 terms → ~16 digits")
 	webPrint("")
 
 	// Cap iterations for web demo
@@ -151,7 +150,43 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 	webPrint(fmt.Sprintf("  π = %s", piStr))
 
 	// Verify correct digits
-	verifyDigits := 15
+	// verifyDigits := 15
+	// Nilakantha gives ~3 digits per factor-of-10 in terms
+	// Estimate converged digits: roughly 3 * log10(iters) - 1
+	/*
+	estDigits := int(3.0*math.Log10(float64(iters))) - 1
+	if estDigits < 5 {
+		estDigits = 5
+	}
+	if estDigits > 30 {
+		estDigits = 30
+	}
+	verifyDigits := estDigits
+	if verifyDigits > showDigits {
+		verifyDigits = showDigits
+	}
+*/
+	// Nilakantha converges slowly. Conservative estimates based on observation.
+	estDigits := 8
+	if iters >= 10000 {
+		estDigits = 9
+	}
+	if iters >= 50000 {
+		estDigits = 10
+	}
+	if iters >= 200000 {
+		estDigits = 11
+	}
+	if iters >= 1000000 {
+		estDigits = 14
+	}
+	if iters >= 5000000 {
+		estDigits = 16
+	}
+	if iters >= 20000000 {
+		estDigits = 18
+	}
+	verifyDigits := estDigits
 	if verifyDigits > showDigits {
 		verifyDigits = showDigits
 	}

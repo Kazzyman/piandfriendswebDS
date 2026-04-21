@@ -99,6 +99,9 @@ func handleRun(w http.ResponseWriter, r *http.Request) {
 			if i, err := strconv.Atoi(itersStr); err == nil && i > 0 {
 				iters = i
 			}
+			if iters > 20000000 {
+				iters = 20000000
+			}
 			precStr := r.URL.Query().Get("precision")
 			precision := 512
 			if p, err := strconv.Atoi(precStr); err == nil && p > 0 {
