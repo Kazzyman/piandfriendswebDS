@@ -38,7 +38,7 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 	webPrint("")
 
 	// Cap iterations for web demo
-	maxIters := 10000000
+	maxIters := 20000000
 	if iters > maxIters {
 		webPrint(fmt.Sprintf("  Iterations capped at %s for web demo.",
 			pkg.FormatIntWithCommas(int64(maxIters))))
@@ -116,9 +116,26 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 			elapsed := time.Since(start)
 			pct := float64(k) / float64(iters) * 100
 
-			estDigits := int(float64(k)/1000000.0*3.0) + 15
-			if estDigits > 30 {
-				estDigits = 30
+			// estDigits := int(float64(k)/1000000.0*3.0) + 15
+				// Conservative digit estimate for progress display
+			estDigits := 8
+			if iters >= 10000 {
+				estDigits = 9
+			}
+			if iters >= 50000 {
+				estDigits = 10
+			}
+			if iters >= 200000 {
+				estDigits = 11
+			}
+			if iters >= 1000000 {
+				estDigits = 14
+			}
+			if iters >= 5000000 {
+				estDigits = 15
+			}
+			if iters >= 20000000 {
+				estDigits = 16
 			}
 
 			webPrint(fmt.Sprintf("  ... %s terms (%.1f%%) ~%d digits %s",
@@ -129,8 +146,8 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 
 			if k%(reportInterval*2) == 0 {
 				showDigits := estDigits + 2
-				if showDigits > 30 {
-					showDigits = 30
+				if showDigits > 18 {
+					showDigits = 18
 				}
 				piStr := pi.Text('f', showDigits)
 				webPrint(fmt.Sprintf("      π ≈ %s", piStr))
@@ -150,24 +167,9 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 	webPrint(fmt.Sprintf("  π = %s", piStr))
 
 	// Verify correct digits
-	// verifyDigits := 15
-	// Nilakantha gives ~3 digits per factor-of-10 in terms
-	// Estimate converged digits: roughly 3 * log10(iters) - 1
-	/*
-	estDigits := int(3.0*math.Log10(float64(iters))) - 1
-	if estDigits < 5 {
-		estDigits = 5
-	}
-	if estDigits > 30 {
-		estDigits = 30
-	}
-	verifyDigits := estDigits
-	if verifyDigits > showDigits {
-		verifyDigits = showDigits
-	}
-*/
 	// Nilakantha converges slowly. Conservative estimates based on observation.
 	estDigits := 8
+	// Nilakantha converges slowly. Conservative estimates based on observation.
 	if iters >= 10000 {
 		estDigits = 9
 	}
@@ -181,10 +183,10 @@ func Nilakantha(done chan bool, webPrint func(string), iters, precision int) {
 		estDigits = 14
 	}
 	if iters >= 5000000 {
-		estDigits = 16
+		estDigits = 15
 	}
 	if iters >= 20000000 {
-		estDigits = 18
+		estDigits = 16
 	}
 	verifyDigits := estDigits
 	if verifyDigits > showDigits {

@@ -220,16 +220,17 @@
 
     <!-- Nilakantha -->
     <div class="input-group">
-        <label>Iterations:</label>
-        <input type="number" id="nilaIters" value="1000000"><br>
-        <label>Precision:</label>
-        <input type="number" id="nilaPrec" value="512">
+        <label>Iterations (max 20M):</label>
+        <input type="number" id="nilaIters" value="1000000" min="1000" max="20000000"><br>
+        <label>Precision (bits):</label>
+        <input type="number" id="nilaPrec" value="512" min="256" max="2048">
     </div>
     <button class="btn" style="background: #73daca; color: #1a1b26;" onclick="start('nilakantha')">
         <strong>Nilakantha Series (c. 1530)</strong><br>
         Kerala school. Predates Newton by 150 years.<br>
         π = 3 + 4/(2·3·4) - 4/(4·5·6) + ...
     </button>
+    <p style="font-size:11px; color:#565f89; margin:2px 0 0 10px;">Converges slowly. 20M terms max, ~16 correct digits.</p>
     <button class="btn btn-sm" onclick="copyOutput()">📋 Copy Output</button>
     <button class="btn btn-sm" style="background: #f7768e;" onclick="stop()">⏹ Stop</button>
     <hr>
