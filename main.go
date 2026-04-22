@@ -35,7 +35,7 @@ func main() {
 	}
 
 	log.Printf("Pi & Friends starting on http://localhost:%s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:"+port, nil))
 }
 
 func serveIndex(w http.ResponseWriter, r *http.Request) {
