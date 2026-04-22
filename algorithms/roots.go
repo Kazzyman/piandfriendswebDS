@@ -1,11 +1,11 @@
+// Package algorithms implements various mathematical algorithms for
+// approximating π, calculating roots, and exploring related constants.
 package algorithms
-
 import (
 	"fmt"
 	"math"
 	"sort"
 	"time"
-
 	"piandfriends/pkg"
 )
 
@@ -448,20 +448,12 @@ func calculatePrecision(radical, workpiece int) int {
 	var precision int
 	if radical == 2 {
 		precision = int(math.Sqrt(float64(workpiece))) / 3
-		if precision < 4 {
-			precision = 4
-		}
-		if precision > 500 {
-			precision = 500
-		}
+		precision = max(precision, 4)
+		precision = min(precision, 500)
 	} else {
 		precision = workpiece * 12
-		if precision < 600 {
-			precision = 600
-		}
-		if precision > 3000 {
-			precision = 3000
-		}
+		precision = max(precision, 600)
+		precision = min(precision, 3000)
 	}
 	return precision
 }

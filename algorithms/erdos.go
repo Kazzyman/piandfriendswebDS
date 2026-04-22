@@ -17,7 +17,8 @@ func ErdosBorwein(done chan bool, webPrint func(string)) {
 	webPrint("  Sum of reciprocals of Mersenne numbers.")
 	webPrint("")
 
-	var sum float64 = 1.0 // n=1 term: 1/(2-1) = 1
+	// var sum float64 = 1.0 // n=1 term: 1/(2-1) = 1
+	var sum = 1.0 // n=1 term: 1/(2-1) = 1
 
 	webPrint("  Converging...")
 	webPrint("")
