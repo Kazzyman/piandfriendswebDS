@@ -8,7 +8,6 @@ import (
 	"piandfriends/pkg"
 )
 
-// test git cred on this machine
 // Archimedes implements an improved version of Archimedes' polygon method.
 // It uses big.Float for high precision and progressively refines the
 // perimeter of an inscribed polygon.
